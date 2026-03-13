@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Shop Name | Order Online</title>
+  <meta
+    name="description"
+    content="Simple online ordering website for a local business. Browse products, add to cart, and place your order online."
+  />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-2: #eef3f8;
+      --text: #18212f;
+      --muted: #607086;
+      --primary: #1f6feb;
+      --primary-dark: #1959bb;
+      --accent: #16a34a;
+      --danger: #dc2626;
+      --border: #dbe4ee;
+      --shadow: 0 10px 30px rgba(19, 35, 62, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --maxw: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(94%, var(--maxw));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      background: linear-gradient(135deg, #ffffff, #f4f8fd);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .contact-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 22px 0 12px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #ffffff, #f2f7fd);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hero h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .hero-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 100%;
+    }
+
+    .hero-box strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .section {
+      padding: 18px 0;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      margin: 0 0 14px;
+    }
+
+    .filters-wrap {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+
+    .filters-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.2s ease;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(0);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px rgba(19, 35, 62, 0.12);
+    }
+
+    .product-image-wrap {
+      aspect-ratio: 1 / 1;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .product-category {
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .product-name {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .product-desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      min-height: 40px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .price {
+      font-size: 1.08rem;
+      font-weight: bold;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      padding: 10px 14px;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 18px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+    }
+
+    .floating-cart,
+    .floating-whatsapp {
+      position: fixed;
+      right: 16px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 18px 30px rgba(19, 35, 62, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 70;
+      transition: transform 0.2s ease;
+    }
+
+    .floating-cart:hover,
+    .floating-whatsapp:hover {
+      transform: scale(1.04);
+    }
+
+    .floating-cart {
+      bottom: 88px;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .floating-whatsapp {
+      bottom: 16px;
+      background: #25d366;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--danger);
+      color: #fff;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      display: grid;
+      place-items: center;
+      border: 2px solid #fff;
+      padding: 0 4px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 18, 30, 0.5);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(100%, 430px);
+      height: 100vh;
+      background: #fff;
+      z-index: 90;
+      transform: translateX(100%);
+      transition: 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -20px 0 40px rgba(10, 18, 30, 0.18);
+    }
+
+    .cart-drawer.show {
+      transform: translateX(0);
+    }
+
+    .drawer-header,
+    .drawer-footer {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .drawer-footer {
+      border-top: 1px solid var(--border);
+      border-bottom: none;
+      margin-top: auto;
+    }
+
+    .drawer-head-row,
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drawer-head-row h3,
+    .checkout-title {
+      margin: 0;
+    }
+
+    .drawer-body {
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafcff;
+    }
+
+    .cart-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 12px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .cart-item img {
+      width: 74px;
+      height: 74px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: var(--surface-2);
+    }
+
+    .cart-item h4 {
+      margin: 0 0 4px;
+      font-size: 0.98rem;
+    }
+
+    .small-muted {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .qty-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: 999px;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.9rem;
+    }
+
+    .summary-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .checkout-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 0.93rem;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
+    }
+
+    .note {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .success-box {
+      margin-top: 14px;
+      background: #ecfdf3;
+      border: 1px solid #b7efcb;
+      color: #106333;
+      border-radius: 14px;
+      padding: 12px;
+      display: none;
+    }
+
+    .success-box.show {
+      display: block;
+    }
+
+    .footer {
+      padding: 26px 0 90px;
+      color: var(--muted);
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .footer h4 {
+      margin: 0 0 10px;
+      color: var(--text);
+    }
+
+    .footer p {
+      margin: 0 0 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 950px) {
+      .products-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .hero-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .contact-mini {
+        justify-content: flex-start;
+      }
+
+      .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card,
+      .footer-card {
+        padding: 16px;
+      }
+
+      .floating-cart,
+      .floating-whatsapp {
+        width: 54px;
+        height: 54px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <h1 id="shopName">Your Shop Name</h1>
+        <p id="shopTagline">Fresh groceries delivered to your door</p>
+      </div>
+      <div class="contact-mini">
+        <span class="chip" id="shopLocation">Varanasi, UP</span>
+        <a class="chip" id="shopPhoneDisplay" href="tel:+919999999999">+91 99999 99999</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-grid">
+            <div>
+              <h2>Simple online ordering for your local customers</h2>
+              <p>
+                Browse products, add items to cart, and place an order in minutes.
+                The shop owner receives the order by email and can confirm on WhatsApp.
+              </p>
+              <div class="hero-meta" id="categoryChips"></div>
+            </div>
+            <div class="hero-box">
+              <strong>How it works</strong>
+              <p style="margin:0;color:var(--muted);">
+                1. Customer adds products to cart<br />
+                2. Fills delivery details<br />
+                3. Order is sent by Formspree email<br />
+                4. Shop contacts customer on WhatsApp
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h3 class="section-title">Shop by category</h3>
+        <div class="filters-wrap" id="filterButtons"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h3 class="section-title">Products</h3>
+        <div id="productsGrid" class="products-grid"></div>
+        <div id="emptyProducts" class="empty-state hidden">
+          No products found in this category.
+        </div>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div class="container">
+        <div class="footer-card">
+          <div class="footer-grid">
+            <div>
+              <h4>About the shop</h4>
+              <p id="aboutText">
+                Replace this text with a short shop introduction. Mention your
+                specialty, local service area, and trust factor.
+              </p>
+            </div>
+            <div>
+              <h4>Contact</h4>
+              <p><strong>Shop:</strong> <span id="footerShopName">Your Shop Name</span></p>
+              <p><strong>Location:</strong> <span id="footerLocation">Varanasi, UP</span></p>
+              <p><strong>Phone:</strong> <a id="footerPhone" href="tel:+919999999999">+91 99999 99999</a></p>
+              <p><strong>Email:</strong> <a id="footerEmail" href="mailto:shop@example.com">shop@example.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button class="floating-cart" id="openCartBtn" aria-label="Open cart">
+    <span style="font-size:1.3rem;">🛒</span>
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+
+  <a
+    class="floating-whatsapp"
+    id="whatsappBtn"
+    href="https://wa.me/919999999999"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat on WhatsApp"
+    title="Chat on WhatsApp"
+  >✆</a>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-head-row">
+        <h3>Your Cart</h3>
+        <button class="btn btn-outline" id="closeCartBtn" type="button">Close</button>
+      </div>
+      <p class="note" style="margin:8px 0 0;">
+        Review items, update quantities, then place your order.
+      </p>
+    </div>
+
+    <div class="drawer-body">
+      <div id="cartItems"></div>
+
+      <div id="cartEmptyState" class="empty-state">
+        Your cart is empty. Add some products to get started.
+      </div>
+
+      <div id="checkoutSection" class="hidden">
+        <div class="summary-box">
+          <div class="total-row">
+            <strong>Grand Total</strong>
+            <strong id="grandTotal">₹0</strong>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <h4 class="checkout-title">Place Order</h4>
+          <p class="note" style="margin:6px 0 0;">
+            This sends the order to the shop owner's email using Formspree.
+          </p>
+        </div>
+
+        <form
+          id="orderForm"
+          class="checkout-form"
+          action="https://formspree.io/f/YOUR_FORM_ID"
+          method="POST"
+        >
+          <div class="field">
+            <label for="customerName">Customer Name *</label>
+            <input id="customerName" name="Customer Name" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="customerPhone">Phone Number *</label>
+            <input id="customerPhone" name="Phone Number" type="tel" required />
+          </div>
+
+          <div class="field">
+            <label for="customerAddress">Delivery Address *</label>
+            <textarea id="customerAddress" name="Delivery Address" required></textarea>
+          </div>
+
+          <div class="field">
+            <label for="customerInstructions">Special Instructions</label>
+            <textarea id="customerInstructions" name="Special Instructions"></textarea>
+          </div>
+
+          <input type="hidden" name="Shop Name" id="formShopName" />
+          <input type="hidden" name="Order Summary" id="orderSummaryField" />
+          <input type="hidden" name="Order Total" id="orderTotalField" />
+          <input type="hidden" name="_subject" id="formSubject" />
+          <input type="hidden" name="_captcha" value="false" />
+
+          <button class="btn btn-primary" type="submit" id="submitOrderBtn">
+            Place Order
+          </button>
+        </form>
+
+        <div id="successBox" class="success-box"></div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <div class="total-row">
+        <span>Total items: <strong id="footerItemCount">0</strong></span>
+        <span>Total: <strong id="footerTotal">₹0</strong></span>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    const SHOP = {
+      name: "Your Shop Name",
+      tagline: "Fresh groceries delivered to your door",
+      location: "Varanasi, UP",
+      phone: "919999999999",
+      displayPhone: "+91 99999 99999",
+      email: "shop@example.com",
+      formspreeAction: "https://formspree.io/f/YOUR_FORM_ID",
+      about:
+        "We serve our local area with everyday essentials, groceries, dairy, snacks, and beverages. Place your order online and we will contact you to confirm availability and delivery.",
+      colorSchemeNote: "Clean, trustworthy blue and green scheme"
+    };
+
+    const PRODUCTS = [
+      {
+        id: 1,
+        name: "Aashirvaad Atta (5kg)",
+        price: 280,
+        category: "Groceries",
+        image: "https://i.ibb.co/8x6B5V6/placeholder-product-1.jpg",
+        description: "Premium whole wheat flour for daily use"
+      },
+      {
+        id: 2,
+        name: "Fortune Rice (5kg)",
+        price: 340,
+        category: "Groceries",
+        image: "https://i.ibb.co/pQw0W6g/placeholder-product-2.jpg",
+        description: "Everyday rice with clean grains and good taste"
+      },
+      {
+        id: 3,
+        name: "Amul Butter (500g)",
+        price: 280,
+        category: "Dairy",
+        image: "https://i.ibb.co/7QpKsCX/placeholder-product-3.jpg",
+        description: "Fresh salted butter for toast and cooking"
+      },
+      {
+   
